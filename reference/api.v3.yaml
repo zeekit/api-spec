@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Zeekit
   version: 3.0-2020.03.01
-  description: "Zeekit API is json based rest api, the ideology for the design are:  \n* Client first - simple frontend code (less backend/batch oriented)\n* Heavy cache usage - multiple cache levels starting from client end (browser), going through CDN and multi level backend cache\n* Pointer based - searching will result in an array of ids, not array of objects\n\nCombining the points above leads to simple client code. the client doesn't manage and data aspect (there is no client database, no stall/fresh checks, and etc.). The result of the design is high number of small and quick requests (under 50ms for 90% in search and under 10ms for 95% in single resource query!), we support http/2 (adding http/3 is comming soon) which multiplex request on single connection - rendaring the overhead of multiple requests to minimum\n\nEach request should have special header `X-Z-Client` with the value supplied from Zeekit. this header will allow the backend to identify the requester and modify the results if needed.\n\nThere is a special response header in most search queries - `X-Total-Count`, it will indicate the total number of items matching the search. by default the server return page of 20 items, you can view different page via `offset` query param (e.g. `offset=20` for the second page). There is an option to change the limit via `limit` query param, it's highly recommanded that you will keep the page size to 20, later on the limit will be capped on server side **WITHOUT** prior notice!​\n\n<!-- theme: warning -->\n> The api supports both `http` and `https` - it's **highly** recommended to use `https`\n\nUse the `Export OpenAPI` button on the top right to download the spec (it's OpenAPI 3.0), the file will allow you to\nauto generate code via [Generator](https://openapi-generator.tech/), import into api explorer tools like [Postman](https://www.postman.com/) and [Insomnia](https://insomnia.rest/)\n"
+  description: "Zeekit API is json based rest api, the ideology for the design are:  \n* Client first - simple frontend code (less backend/batch oriented)\n* Heavy cache usage - multiple cache levels starting from client end (browser), going through CDN and multi level backend cache\n* Pointer based - searching will result in an array of ids, not array of objects\n\nCombining the points above leads to simple client code - the client doesn't manage and data aspect (there is no client database, no stall/fresh checks, and etc.). The result of the design is high number of small and quick requests (under 50ms for 90% in search and under 10ms for 95% in single resource query!), we support http/2 (adding http/3 is comming soon) which multiplex request on single connection - rendaring the overhead of multiple requests to minimum\n\nEach request should have special header `X-Z-Client` with the value supplied from Zeekit. this header will allow the backend to identify the requester and modify the results if needed.\n\nThere is a special response header in most search queries - `X-Total-Count`, it will indicate the total number of items matching the search. by default the server return page of 20 items, you can view different page via `offset` query param (e.g. `offset=20` for the second page). There is an option to change the limit via `limit` query param, it's highly recommanded that you will keep the page size to 20, later on the limit will be capped on server side **WITHOUT** prior notice!​\n\n<!-- theme: warning -->\n> The api supports both `http` and `https` - it's **highly** recommended to use `https`\n\nSee the side bar for endpoints information. Use the `Export OpenAPI` button on the top right to download the spec (it's OpenAPI 3.0), the file will allow you to\nauto generate code via [Generator](https://openapi-generator.tech/), import into api explorer tools like [Postman](https://www.postman.com/) and [Insomnia](https://insomnia.rest/)\n"
   contact:
     name: developer@zeekit
     url: 'https://zeekit.co'
@@ -697,7 +697,6 @@ paths:
       summary: Image Visualization
       tags:
         - image
-        - product
       responses:
         '200':
           description: OK
@@ -786,7 +785,6 @@ paths:
       summary: Persona Visualization
       tags:
         - persona
-        - product
       responses:
         '200':
           description: OK
@@ -857,7 +855,6 @@ paths:
       summary: Persona Images
       tags:
         - persona
-        - image
       responses:
         '200':
           description: OK
@@ -910,7 +907,6 @@ paths:
       summary: Image Visualization with Background
       tags:
         - image
-        - product
       responses:
         '200':
           description: OK
@@ -1062,7 +1058,6 @@ paths:
           description: "server default is 'false'"
       tags:
         - persona
-        - product
   /user:
     post:
       summary: Create User
