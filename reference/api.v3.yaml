@@ -1,0 +1,1459 @@
+openapi: 3.0.0
+info:
+  title: Zeekit
+  version: 3.0-2020.03.01
+  description: "Zeekit API is json based rest api, the ideology for the design are:  \n* Client first - simple frontend code (less backend/batch oriented)\n* Heavy cache usage - multiple cache levels starting from client end (browser), going through CDN and multi level backend cache\n* Pointer based - searching will result in an array of ids, not array of objects\n\nCombining the points above leads to simple client code. the client doesn't manage and data aspect (there is no client database, no stall/fresh checks, and etc.). The result of the design is high number of small and quick requests (under 50ms for 90% in search and under 10ms for 95% in single resource query!), we support http/2 (adding http/3 is comming soon) which multiplex request on single connection - rendaring the overhead of multiple requests to minimum\n\nEach request should have special header `X-Z-Client` with the value supplied from Zeekit. this header will allow the backend to identify the requester and modify the results if needed.\n\nThere is a special response header in most search queries - `X-Total-Count`, it will indicate the total number of items matching the search. by default the server return page of 20 items, you can view different page via `offset` query param (e.g. `offset=20` for the second page). There is an option to change the limit via `limit` query param, it's highly recommanded that you will keep the page size to 20, later on the limit will be capped on server side **WITHOUT** prior notice!​\n\n<!-- theme: warning -->\n> The api supports both `http` and `https` - it's **highly** recommended to use `https`\n\nUse the `Export OpenAPI` button on the top right to download the spec (it's OpenAPI 3.0), the file will allow you to\nauto generate code via [Generator](https://openapi-generator.tech/), import into api explorer tools like [Postman](https://www.postman.com/) and [Insomnia](https://insomnia.rest/)\n"
+  contact:
+    name: developer@zeekit
+    url: 'https://zeekit.co'
+    email: developer@zeekit.co
+  termsOfService: 'https://zeekit.co/terms'
+servers:
+  - url: 'https://api.zeekit.co/v3'
+paths:
+  '/product/{productId}':
+    parameters:
+      - schema:
+          type: number
+        name: productId
+        in: path
+        required: true
+    get:
+      summary: Single Product
+      tags:
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              examples:
+                ex-flow-1:
+                  value:
+                    brand:
+                      name: adidas
+                      imageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
+                    brandName: adidas
+                    retailer: adidas
+                    id: 124871
+                    siteUrl: 'https://www.adidas.co.uk/adistar-jersey/FJ6599.html?zc=Tech%20Indigo%20%2F%20App%20Solar%20Red'
+                    name: Adistar Jersey
+                    updatedAt: '2020-04-02T16:38:52Z'
+                    createdAt: '2020-03-21T20:54:42Z'
+                    available: true
+                    important: true
+                    comment: ''
+                    minPrice: 154.74
+                    maxPrice: 154.74
+                    error: ''
+                    processing: false
+                    externalId: FJ6599
+                    view: FRONT
+                    photoshopped: false
+                    gender: WOMAN
+                    status: ACTIVE
+                    category: Short Sleeves
+                    imageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871.jpg'
+                    displayImageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871_display.jpg'
+                    vibeImageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871_vibe.jpg'
+                    brandImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
+                    retailerImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
+      operationId: get-product-productId
+      description: Get single product
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  /product:
+    get:
+      summary: Search Products
+      tags:
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+              examples:
+                ex-flow-1:
+                  value:
+                    - 124871
+                    - 124869
+                    - 124868
+                    - 124859
+                    - 124857
+                    - 124856
+                    - 124855
+                    - 124854
+                    - 124852
+                    - 124851
+                    - 124849
+                    - 124845
+                    - 124840
+                    - 124839
+                    - 124837
+                    - 124836
+                    - 124833
+                    - 124831
+                    - 124829
+                    - 124827
+          headers:
+            X-Total-Count:
+              schema:
+                type: number
+              description: 'Total number of result, for pagination support'
+      operationId: get-product
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - schema:
+            $ref: '#/components/schemas/Status'
+          in: query
+          name: status
+          description: "server default is 'ACTIVE'"
+        - schema:
+            $ref: '#/components/schemas/Category'
+          in: query
+          name: category
+        - schema:
+            type: string
+          in: query
+          name: brand
+        - schema:
+            type: string
+          in: query
+          name: retailer
+        - schema:
+            type: string
+          in: query
+          name: color
+        - schema:
+            type: string
+          in: query
+          name: style
+        - schema:
+            type: string
+          in: query
+          name: shops
+        - schema:
+            type: string
+          in: query
+          name: occasions
+        - schema:
+            type: string
+          in: query
+          name: clothing
+        - schema:
+            type: string
+          in: query
+          name: fabric
+        - schema:
+            type: string
+          in: query
+          name: fit
+        - schema:
+            type: string
+          in: query
+          name: sleeveStyle
+        - schema:
+            type: string
+          in: query
+          name: legStyle
+        - schema:
+            type: string
+          in: query
+          name: waistStyle
+        - schema:
+            type: string
+          in: query
+          name: neckStyle
+        - schema:
+            $ref: '#/components/schemas/Trilean'
+          in: query
+          name: sale
+        - schema:
+            $ref: '#/components/schemas/Trilean'
+          in: query
+          name: available
+          description: "server default is 'true'"
+        - schema:
+            $ref: '#/components/schemas/Trilean'
+          in: query
+          name: featured
+        - schema:
+            $ref: '#/components/schemas/Gender'
+          in: query
+          name: gender
+        - schema:
+            type: string
+          in: query
+          name: q
+          description: Free text search
+        - schema:
+            type: string
+          in: query
+          name: url
+        - schema:
+            type: string
+          in: query
+          name: name
+        - schema:
+            type: string
+          in: query
+          name: error
+        - schema:
+            type: string
+          in: query
+          name: comment
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: lastUpdatedBefore
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: lastUpdatedAfter
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: createdBefore
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: createdAfter
+        - schema:
+            type: string
+          in: query
+          name: externalId
+        - schema:
+            type: string
+          in: query
+          name: body
+        - schema:
+            type: string
+          in: query
+          name: ageGroup
+        - schema:
+            type: string
+          in: query
+          name: stature
+        - schema:
+            type: boolean
+          in: query
+          name: primary
+        - schema:
+            type: number
+          in: query
+          name: component
+        - schema:
+            type: string
+          in: query
+          name: view
+          description: "server default is 'FRONT'"
+        - schema:
+            type: string
+          in: query
+          name: pattern
+        - schema:
+            type: number
+          in: query
+          name: projectId
+        - schema:
+            type: number
+          in: query
+          name: companyId
+        - schema:
+            type: string
+          in: query
+          name: sort
+        - schema:
+            type: number
+            maximum: 50
+            minimum: 0
+          in: query
+          name: limit
+          description: "server default is '20'"
+        - schema:
+            type: number
+          in: query
+          name: offset
+          description: "server default is '0'"
+      description: Search for products
+  '/image/{imageId}':
+    parameters:
+      - schema:
+          type: number
+        name: imageId
+        in: path
+        required: true
+    get:
+      summary: Single Image
+      tags:
+        - image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+              examples:
+                ex-flow-1:
+                  value:
+                    id: 36998
+                    owner: 2360199
+                    error: ''
+                    size: ''
+                    height: 178
+                    name: Breuninger woman 1
+                    updatedAt: '2020-04-20T10:12:37Z'
+                    createdAt: '2020-04-10T14:31:51Z'
+                    processing: false
+                    verified: true
+                    personaId: 853
+                    view: FRONT
+                    photoshopped: true
+                    important: false
+                    imageUrl: 'https://api.zeekit.co/v3/image/36998/data/36998.jpg'
+                    profileImageUrl: 'https://api.zeekit.co/v3/image/36998/data/36998_profile.jpg'
+                    dataUrl: 'https://api.zeekit.co/v3/image/36998/data/36998.json'
+                    gender: WOMAN
+                    status: ACTIVE
+      operationId: get-image-imageId
+      description: Get single image
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  /meta/image/models:
+    get:
+      summary: Search Public Images
+      tags:
+        - image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+              examples:
+                ex-flow-1:
+                  value:
+                    - 37001
+                    - 36998
+                    - 36996
+                    - 35884
+                    - 35765
+                    - 35745
+                    - 35744
+                    - 35743
+                    - 35739
+                    - 35732
+                    - 35704
+                    - 35691
+                    - 35690
+                    - 35684
+                    - 35683
+                    - 35682
+                    - 35665
+                    - 35660
+                    - 35657
+                    - 35654
+          headers:
+            X-Total-Count:
+              schema:
+                type: number
+              description: 'Total number of result, for pagination support'
+      operationId: get-meta-image-models
+      description: Get public model images
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - schema:
+            type: number
+            maximum: 50
+            minimum: 0
+          in: query
+          name: limit
+          description: "server default is '20'"
+        - schema:
+            type: number
+          in: query
+          name: offset
+          description: "server default is '0'"
+        - schema:
+            $ref: '#/components/schemas/Gender'
+          in: query
+          name: gender
+        - schema:
+            type: string
+          in: query
+          name: owner
+        - schema:
+            type: string
+          in: query
+          name: size
+        - schema:
+            type: string
+          in: query
+          name: body
+        - schema:
+            type: string
+          in: query
+          name: height
+          description: in centimeters
+        - schema:
+            type: string
+          in: query
+          name: minHeight
+          description: in centimeters
+        - schema:
+            type: string
+          in: query
+          name: maxHeight
+          description: in centimeters
+        - schema:
+            type: string
+          in: query
+          name: personaId
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: createdBefore
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: createdAfter
+        - schema:
+            type: string
+          in: query
+          name: shoeType
+        - schema:
+            type: string
+          in: query
+          name: shoeColor
+        - schema:
+            type: string
+          in: query
+          name: sleeveStyle
+        - schema:
+            type: string
+          in: query
+          name: makeup
+        - schema:
+            type: string
+          in: query
+          name: facialExpression
+        - schema:
+            type: string
+          in: query
+          name: view
+          description: "server default is 'FRONT'"
+        - schema:
+            type: string
+          in: query
+          name: ageGroup
+        - schema:
+            type: string
+          in: query
+          name: stature
+        - schema:
+            type: string
+          in: query
+          name: pose
+        - schema:
+            type: string
+          in: query
+          name: skinTone
+        - schema:
+            type: string
+          in: query
+          name: name
+  /meta/persona/models:
+    get:
+      summary: Search Public Personas
+      tags:
+        - persona
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+              examples:
+                ex-flow-1:
+                  value:
+                    - 599
+                    - 597
+                    - 595
+                    - 576
+                    - 575
+                    - 574
+                    - 573
+                    - 572
+                    - 571
+                    - 570
+                    - 569
+                    - 568
+                    - 567
+                    - 566
+                    - 565
+                    - 564
+                    - 563
+                    - 562
+                    - 561
+                    - 558
+          headers:
+            X-Total-Count:
+              schema:
+                type: number
+              description: 'Total number of result, for pagination support'
+      operationId: get-meta-persona-models
+      description: Get public model personas
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - schema:
+            type: number
+            maximum: 50
+            minimum: 0
+          in: query
+          name: limit
+          description: "server default is '20'"
+        - schema:
+            type: number
+          in: query
+          name: offset
+          description: "server default is '0'"
+        - schema:
+            $ref: '#/components/schemas/Gender'
+          in: query
+          name: gender
+        - schema:
+            type: string
+          in: query
+          name: owner
+        - schema:
+            type: string
+          in: query
+          name: size
+        - schema:
+            type: string
+          in: query
+          name: body
+        - schema:
+            type: string
+          in: query
+          name: height
+          description: in centimeters
+        - schema:
+            type: string
+          in: query
+          name: minHeight
+          description: in centimeters
+        - schema:
+            type: string
+          in: query
+          name: maxHeight
+          description: in centimeters
+        - schema:
+            type: string
+          in: query
+          name: imageId
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: createdBefore
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: createdAfter
+        - schema:
+            type: string
+          in: query
+          name: shoeType
+        - schema:
+            type: string
+          in: query
+          name: shoeColor
+        - schema:
+            type: string
+          in: query
+          name: eyeColor
+        - schema:
+            type: string
+          in: query
+          name: hairColor
+        - schema:
+            type: string
+          in: query
+          name: ethnicity
+        - schema:
+            type: string
+          in: query
+          name: style
+        - schema:
+            type: string
+          in: query
+          name: makeup
+        - schema:
+            type: string
+          in: query
+          name: facialExpression
+        - schema:
+            type: string
+          in: query
+          name: view
+          description: "server default is 'FRONT'"
+        - schema:
+            type: string
+          in: query
+          name: ageGroup
+        - schema:
+            type: string
+          in: query
+          name: pose
+        - schema:
+            type: string
+          in: query
+          name: skinTone
+        - schema:
+            type: string
+          in: query
+          name: name
+  '/persona/{personaId}':
+    parameters:
+      - schema:
+          type: number
+        name: personaId
+        in: path
+        required: true
+    get:
+      summary: Single Persona
+      tags:
+        - persona
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Persona'
+              examples:
+                ex-flow-1:
+                  value:
+                    id: 599
+                    owner: 4252334
+                    size: M
+                    height: 160
+                    name: Bel postel
+                    updatedAt: '2020-02-11T10:13:57Z'
+                    createdAt: '2020-02-11T10:13:57Z'
+                    gender: WOMAN
+      operationId: get-persona-personaId
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+      description: Get single persona
+  '/image/{imageId}/{visualizationType}/{products}':
+    parameters:
+      - schema:
+          type: number
+        name: imageId
+        in: path
+        required: true
+      - schema:
+          type: string
+          enum:
+            - simulation
+            - transparent
+            - ghost
+            - overlay
+          default: simulation
+        name: visualizationType
+        in: path
+        required: true
+        description: ''
+      - schema:
+          type: string
+          pattern: "^(\\d+)(,\\d+)*$"
+        name: products
+        in: path
+        required: true
+        description: "product ids separated with ','"
+    get:
+      summary: Image Visualization
+      tags:
+        - image
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+              examples: {}
+            image/png:
+              schema:
+                type: string
+                format: binary
+      operationId: get-image-imageId-visualizationType-products
+      description: |-
+        Visualization of image with products
+
+        The order of the products list define the order of the clothing in the visualization (e.g. tuck-in or tuck-out)
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - $ref: '#/components/parameters/visualizationCropParam'
+        - $ref: '#/components/parameters/visualizationSizeParam'
+        - $ref: '#/components/parameters/visualizationKeepAspectRationTypeParam'
+        - schema:
+            type: number
+          in: query
+          name: cropIndex
+          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+        - schema:
+            type: boolean
+          in: query
+          name: headless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: shoeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: hipless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: breastless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: kneeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: torsoless
+          description: "server default is 'false'"
+  '/persona/{personaId}/{visualizationType}/{products}':
+    parameters:
+      - schema:
+          type: number
+        name: personaId
+        in: path
+        required: true
+      - schema:
+          type: string
+          enum:
+            - simulation
+            - transparent
+            - ghost
+            - overlay
+          default: simulation
+        name: visualizationType
+        in: path
+        required: true
+        description: ''
+      - schema:
+          type: string
+          pattern: "^(\\d+)(,\\d+)*$"
+        name: products
+        in: path
+        required: true
+        description: "product ids separated with ','"
+    get:
+      summary: Persona Visualization
+      tags:
+        - persona
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+      operationId: get-persona-personaId-visualizationType-products
+      description: |-
+        Visualization of persona with products
+
+        This endpoint will select to most relevant image from the persona images and use that image for visulization
+
+        The order of the products list define the order of the clothing in the visualization (e.g. tuck-in or tuck-out)
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - $ref: '#/components/parameters/visualizationCropParam'
+        - $ref: '#/components/parameters/visualizationSizeParam'
+        - $ref: '#/components/parameters/visualizationKeepAspectRationTypeParam'
+        - schema:
+            type: number
+          in: query
+          name: cropIndex
+          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+        - schema:
+            type: boolean
+          in: query
+          name: headless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: shoeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: hipless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: breastless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: kneeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: torsoless
+          description: "server default is 'false'"
+  '/persona/{personaId}/image':
+    parameters:
+      - schema:
+          type: number
+        name: personaId
+        in: path
+        required: true
+    get:
+      summary: Persona Images
+      tags:
+        - persona
+        - image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+              examples:
+                ex-flow-1:
+                  value:
+                    - 35574
+      operationId: get-persona-personaId-image
+      description: Search persona images
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  '/image/{imageId}/{visualizationType}/{products}/background/{backgroundId}':
+    parameters:
+      - schema:
+          type: number
+        name: imageId
+        in: path
+        required: true
+      - schema:
+          type: string
+          enum:
+            - simulation
+            - transparent
+            - ghost
+            - overlay
+          default: simulation
+        name: visualizationType
+        in: path
+        required: true
+        description: ''
+      - schema:
+          type: string
+          pattern: "^(\\d+)(,\\d+)*$"
+        name: products
+        in: path
+        required: true
+        description: "product ids separated with ','"
+      - schema:
+          type: number
+        name: backgroundId
+        in: path
+        required: true
+    get:
+      summary: Image Visualization with Background
+      tags:
+        - image
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+      operationId: get-image-imageId-visualizationType-products-background-backgroundId
+      description: |-
+        Visualization of image with products and background
+
+        The order of the products list define the order of the clothing in the visualization (e.g. tuck-in or tuck-out)
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - $ref: '#/components/parameters/visualizationCropParam'
+        - $ref: '#/components/parameters/visualizationSizeParam'
+        - $ref: '#/components/parameters/visualizationKeepAspectRationTypeParam'
+        - schema:
+            type: number
+          in: query
+          name: cropIndex
+          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+        - schema:
+            type: boolean
+          in: query
+          name: headless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: shoeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: hipless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: breastless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: kneeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: torsoless
+          description: "server default is 'false'"
+  '/persona/{personaId}/{visualizationType}/{products}/background/{backgroundId}':
+    parameters:
+      - schema:
+          type: number
+        name: personaId
+        in: path
+        required: true
+      - schema:
+          type: string
+          enum:
+            - simulation
+            - transparent
+            - ghost
+            - overlay
+          default: simulation
+        name: visualizationType
+        in: path
+        required: true
+        description: ''
+      - schema:
+          type: string
+          pattern: "^(\\d+)(,\\d+)*$"
+        name: products
+        in: path
+        required: true
+        description: "product ids separated with ','"
+      - schema:
+          type: number
+        name: backgroundId
+        in: path
+        required: true
+    get:
+      summary: Persona Visualization with Background
+      responses:
+        '200':
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+      operationId: get-persona-personaId-visualizationType-products-background-backgroundId
+      description: |-
+        Visualization of persona with products and background
+
+        This endpoint will select to most relevant image from the persona images and use that image for visulization
+
+        The order of the products list define the order of the clothing in the visualization (e.g. tuck-in or tuck-out)
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+        - $ref: '#/components/parameters/visualizationCropParam'
+        - $ref: '#/components/parameters/visualizationSizeParam'
+        - $ref: '#/components/parameters/visualizationKeepAspectRationTypeParam'
+        - schema:
+            type: number
+          in: query
+          name: cropIndex
+          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+        - schema:
+            type: boolean
+          in: query
+          name: headless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: shoeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: hipless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: breastless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: kneeless
+          description: "server default is 'false'"
+        - schema:
+            type: boolean
+          in: query
+          name: torsoless
+          description: "server default is 'false'"
+      tags:
+        - persona
+        - product
+  /user:
+    post:
+      summary: Create User
+      operationId: post-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                ex-flow-1:
+                  value:
+                    profileImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/user/7185197/7185197.jpg'
+                    id: 7185197
+                    username: ce4ed617-8472-4e18-9768-10f6eec76071
+                    password: 608ddb8c-337b-42b9-8551-af7d2a4cfa15
+                    updatedAt: '2020-04-23T05:10:32Z'
+                    createdAt: '2020-04-23T05:10:32Z'
+      description: |-
+        Create user
+
+        Server will generate username and password if not supplied in the request, it's the preffered way to create user with auto generate username and password, this allow automatic (no interaction) creation by code and there is no risk in reusing the same username-password in other internet services
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              ex-flow-1:
+                value: {}
+        description: |-
+          You are encourage to post user object _*WITHOUT*_ username-password, it will be auto generated by the server and return in the response
+
+          There is no mistake in the example, the body is emoty object `{}`
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+      tags:
+        - user
+  '/user/{userId}':
+    parameters:
+      - schema:
+          type: number
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: Single User
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                ex-flow-1:
+                  value:
+                    profileImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/user/7185197/7185197.jpg'
+                    id: 7185197
+                    username: ce4ed617-8472-4e18-9768-10f6eec76071
+                    updatedAt: '2020-04-23T05:10:32Z'
+                    createdAt: '2020-04-23T05:10:32Z'
+      operationId: get-user-userId
+      description: Get single user
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  '/user/{userId}/persona':
+    parameters:
+      - schema:
+          type: number
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: User Persona
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+              examples:
+                ex-flow-1:
+                  value: []
+      operationId: get-user-userId-persona
+      description: Get user personas
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  '/user/{userId}/image':
+    parameters:
+      - schema:
+          type: number
+        name: userId
+        in: path
+        required: true
+    get:
+      summary: User Image
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: number
+              examples:
+                ex-flow-1:
+                  value: []
+          headers:
+            X-Total-Count:
+              schema:
+                type: number
+              description: 'Total number of result, for pagination support'
+      operationId: get-user-userId-image
+      description: Get user images
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  /user/me:
+    get:
+      summary: Get Self User
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                ex-flow-1:
+                  value:
+                    profileImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/user/7185197/7185197.jpg'
+                    id: 7185197
+                    username: ce4ed617-8472-4e18-9768-10f6eec76071
+                    updatedAt: '2020-04-23T05:10:32Z'
+                    createdAt: '2020-04-23T05:10:32Z'
+      operationId: get-user-me
+      description: |-
+        Get self user
+
+        The alias "me" is usefull when you have username-password but doesn't have the user id
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+components:
+  schemas:
+    Product:
+      title: Product
+      type: object
+      properties:
+        id:
+          type: number
+        siteUrl:
+          type: string
+          format: uri
+        name:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        gender:
+          $ref: '#/components/schemas/Gender'
+        available:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/Status'
+        comment:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        minPrice:
+          type: number
+        maxPrice:
+          type: number
+        salePrice:
+          type: number
+        error:
+          type: string
+        externalId:
+          type: string
+        description:
+          type: string
+        view:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        displayImageUrl:
+          type: string
+          format: uri
+      required:
+        - siteUrl
+    Trilean:
+      type: string
+      title: Trilean
+      enum:
+        - 'TRUE'
+        - 'FALSE'
+        - ALL
+      description: "Boolean parameter with 'all' option (to allow both true and false), useful in overriding default filters where the default value is either true or false and you need 'all' option"
+    Status:
+      type: string
+      title: Status
+      enum:
+        - ACTIVE
+        - DEFECTIVE
+        - ERROR
+        - FASHION
+        - INACTIVE
+        - INITIAL
+        - OPEN
+        - PHOTOSHOP
+        - QA
+        - QC
+        - RAW
+    Gender:
+      type: string
+      title: Gender
+      enum:
+        - WOMAN
+        - MAN
+        - UNISEX
+    Category:
+      title: Category
+      type: string
+      enum:
+        - Tank Tops
+        - Short Sleeves
+        - Long Sleeves
+        - Sweaters
+        - 'Jackets & Coats'
+        - Dresses
+        - Pants
+        - Shorts
+        - Skirts
+        - Outfits
+        - Shoes
+        - Hats
+        - Glasses
+        - Bags
+        - Makeup
+        - Jewelry
+        - Accessories
+        - Rompers
+        - Necklaces
+        - Errings
+        - Bracelets
+        - Rings
+        - Underwear
+    Image:
+      title: Image
+      type: object
+      properties:
+        id:
+          type: number
+        owner:
+          type: number
+          description: Owner user id
+        size:
+          type: string
+        height:
+          type: number
+          description: height in centimeters
+        name:
+          type: string
+        view:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        gender:
+          $ref: '#/components/schemas/Gender'
+        status:
+          $ref: '#/components/schemas/Status'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        personaId:
+          type: number
+        profileImageUrl:
+          type: string
+          format: uri
+    Persona:
+      title: Persona
+      type: object
+      properties:
+        id:
+          type: number
+        size:
+          type: string
+        height:
+          type: number
+          description: height in centimeters
+        name:
+          type: string
+        gender:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        owner:
+          type: number
+          description: Owner user id
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: number
+        username:
+          type: string
+        password:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        profileImageUrl:
+          type: string
+        title:
+          type: string
+        displayName:
+          type: string
+  parameters:
+    xzClientParam:
+      schema:
+        type: string
+      in: header
+      name: X-Z-Client
+    visualizationCropParam:
+      name: crop
+      schema:
+        type: string
+        enum:
+          - NONE
+          - WIDTH
+          - HEIGHT
+          - BOTH
+          - ZOOM
+          - EXTRA_ZOOM
+          - SUPER_ZOOM
+          - LEFT_ZOOM
+          - RIGHT_ZOOM
+      in: query
+    visualizationSizeParam:
+      schema:
+        type: string
+        enum:
+          - SMALL
+          - MEDIUM
+          - LARGE
+          - XLARGE
+          - ORIGINAL
+      in: query
+      name: size
+      description: "server default is 'LARGE'"
+    visualizationKeepAspectRationTypeParam:
+      schema:
+        type: string
+        enum:
+          - NONE
+          - WIDTH
+          - HEIGHT
+          - FIT
+          - FILL
+      in: query
+      name: keepAspectRatioType
+      description: "server default is 'NONE'"
+tags:
+  - name: product
+  - name: image
+  - name: persona
+  - name: user
