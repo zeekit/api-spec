@@ -1413,37 +1413,37 @@ components:
       schema:
         type: string
         enum:
-          - NONE
-          - WIDTH
-          - HEIGHT
-          - BOTH
-          - ZOOM
-          - EXTRA_ZOOM
-          - SUPER_ZOOM
-          - LEFT_ZOOM
-          - RIGHT_ZOOM
+          - none
+          - width
+          - height
+          - both
+          - zoom
+          - extraZoom
+          - superZoom
+          - leftZoom
+          - rightZoom
       in: query
     visualizationSizeParam:
       schema:
         type: string
         enum:
-          - SMALL
-          - MEDIUM
-          - LARGE
-          - XLARGE
-          - ORIGINAL
+          - small
+          - medium
+          - large
+          - xlarge
+          - original
       in: query
       name: size
-      description: "server default is 'LARGE'"
+      description: "server default is 'large'"
     visualizationKeepAspectRationTypeParam:
       schema:
         type: string
         enum:
-          - NONE
-          - WIDTH
-          - HEIGHT
-          - FIT
-          - FILL
+          - none
+          - width
+          - height
+          - fit
+          - fill
       in: query
       name: keepAspectRatioType
       description: "server default is 'NONE'"
