@@ -1446,7 +1446,7 @@ components:
           - fill
       in: query
       name: keepAspectRatioType
-      description: "server default is 'NONE'"
+      description: "server default is 'none'"
 tags:
   - name: product
   - name: image
