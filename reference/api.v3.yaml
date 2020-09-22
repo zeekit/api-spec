@@ -2,7 +2,23 @@ openapi: 3.0.0
 info:
   title: Zeekit
   version: 3.0-2020.03.01
-  description: "Zeekit API is json based rest api, the ideology for the design are:  \n* Client first - simple frontend code (less backend/batch oriented)\n* Heavy cache usage - multiple cache levels starting from client end (browser), going through CDN and multi level backend cache\n* Pointer based - searching will result in an array of ids, not array of objects\n\nCombining the points above leads to simple client code - the client doesn't manage and data aspect (there is no client database, no stall/fresh checks, and etc.). The result of the design is high number of small and quick requests (under 50ms for 90% in search and under 10ms for 95% in single resource query!), we support http/2 (adding http/3 is comming soon) which multiplex request on single connection - rendaring the overhead of multiple requests to minimum\n\nEach request should have special header `X-Z-Client` with the value supplied from Zeekit. this header will allow the backend to identify the requester and modify the results if needed.\n\nThere is a special response header in most search queries - `X-Total-Count`, it will indicate the total number of items matching the search. by default the server return page of 20 items, you can view different page via `offset` query param (e.g. `offset=20` for the second page). There is an option to change the limit via `limit` query param, it's highly recommanded that you will keep the page size to 20, later on the limit will be capped on server side **WITHOUT** prior notice!​\n\n<!-- theme: warning -->\n> The api supports both `http` and `https` - it's **highly** recommended to use `https`\n\nSee the side bar for endpoints information. Use the `Export OpenAPI` button on the top right to download the spec (it's OpenAPI 3.0), the file will allow you to\nauto generate code via [Generator](https://openapi-generator.tech/), import into api explorer tools like [Postman](https://www.postman.com/) and [Insomnia](https://insomnia.rest/)\n"
+  description: |
+    Zeekit API is json based rest api, the ideology for the design are:  
+    * Client first - simple frontend code (less backend/batch oriented)
+    * Heavy cache usage - multiple cache levels starting from client end (browser), going through CDN and multi level backend cache
+    * Pointer based - searching will result in an array of ids, not array of objects
+
+    Combining the points above leads to simple client code - the client doesn't manage and data aspect (there is no client database, no stall/fresh checks, and etc.). The result of the design is high number of small and quick requests (under 50ms for 90% in search and under 10ms for 95% in single resource query!), we support http/2 (adding http/3 is comming soon) which multiplex request on single connection - rendaring the overhead of multiple requests to minimum
+
+    Each request should have special header `X-Z-Client` with the value supplied from Zeekit. this header will allow the backend to identify the requester and modify the results if needed.
+
+    There is a special response header in most search queries - `X-Total-Count`, it will indicate the total number of items matching the search. by default the server return page of 20 items, you can view different page via `offset` query param (e.g. `offset=20` for the second page). There is an option to change the limit via `limit` query param, it's highly recommanded that you will keep the page size to 20, later on the limit will be capped on server side **WITHOUT** prior notice!​
+
+    <!-- theme: warning -->
+    > The api supports both `http` and `https` - it's **highly** recommended to use `https`
+
+    See the side bar for endpoints information. Use the `Export OpenAPI` button on the top right to download the spec (it's OpenAPI 3.0), the file will allow you to
+    auto generate code via [Generator](https://openapi-generator.tech/), import into api explorer tools like [Postman](https://www.postman.com/) and [Insomnia](https://insomnia.rest/)
   contact:
     name: developer@zeekit
     url: 'https://zeekit.co'
@@ -11,59 +27,6 @@ info:
 servers:
   - url: 'https://api.zeekit.co/v3'
 paths:
-  '/product/{productId}':
-    parameters:
-      - schema:
-          type: number
-        name: productId
-        in: path
-        required: true
-    get:
-      summary: Single Product
-      tags:
-        - product
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-              examples:
-                ex-flow-1:
-                  value:
-                    brand:
-                      name: adidas
-                      imageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
-                    brandName: adidas
-                    retailer: adidas
-                    id: 124871
-                    siteUrl: 'https://www.adidas.co.uk/adistar-jersey/FJ6599.html?zc=Tech%20Indigo%20%2F%20App%20Solar%20Red'
-                    name: Adistar Jersey
-                    updatedAt: '2020-04-02T16:38:52Z'
-                    createdAt: '2020-03-21T20:54:42Z'
-                    available: true
-                    important: true
-                    comment: ''
-                    minPrice: 154.74
-                    maxPrice: 154.74
-                    error: ''
-                    processing: false
-                    externalId: FJ6599
-                    view: FRONT
-                    photoshopped: false
-                    gender: WOMAN
-                    status: ACTIVE
-                    category: Short Sleeves
-                    imageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871.jpg'
-                    displayImageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871_display.jpg'
-                    vibeImageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871_vibe.jpg'
-                    brandImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
-                    retailerImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
-      operationId: get-product-productId
-      description: Get single product
-      parameters:
-        - $ref: '#/components/parameters/xzClientParam'
   /product:
     get:
       summary: Search Products
@@ -113,7 +76,7 @@ paths:
             $ref: '#/components/schemas/Status'
           in: query
           name: status
-          description: "server default is 'ACTIVE'"
+          description: server default is 'ACTIVE'
         - schema:
             $ref: '#/components/schemas/Category'
           in: query
@@ -178,7 +141,7 @@ paths:
             $ref: '#/components/schemas/Trilean'
           in: query
           name: available
-          description: "server default is 'true'"
+          description: server default is 'true'
         - schema:
             $ref: '#/components/schemas/Trilean'
           in: query
@@ -256,7 +219,7 @@ paths:
             type: string
           in: query
           name: view
-          description: "server default is 'FRONT'"
+          description: server default is 'FRONT'
         - schema:
             type: string
           in: query
@@ -279,13 +242,248 @@ paths:
             minimum: 0
           in: query
           name: limit
-          description: "server default is '20'"
+          description: server default is '20'
         - schema:
             type: number
           in: query
           name: offset
-          description: "server default is '0'"
+          description: server default is '0'
       description: Search for products
+  '/product/{productId}':
+    parameters:
+      - schema:
+          type: number
+        name: productId
+        in: path
+        required: true
+    get:
+      summary: Single Product
+      tags:
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              examples:
+                ex-flow-1:
+                  value:
+                    brand:
+                      name: adidas
+                      imageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
+                    brandName: adidas
+                    retailer: adidas
+                    id: 124871
+                    siteUrl: 'https://www.adidas.co.uk/adistar-jersey/FJ6599.html?zc=Tech%20Indigo%20%2F%20App%20Solar%20Red'
+                    name: Adistar Jersey
+                    updatedAt: '2020-04-02T16:38:52Z'
+                    createdAt: '2020-03-21T20:54:42Z'
+                    available: true
+                    important: true
+                    comment: ''
+                    minPrice: 154.74
+                    maxPrice: 154.74
+                    error: ''
+                    processing: false
+                    externalId: FJ6599
+                    view: FRONT
+                    photoshopped: false
+                    gender: WOMAN
+                    status: ACTIVE
+                    category: Short Sleeves
+                    imageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871.jpg'
+                    displayImageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871_display.jpg'
+                    vibeImageUrl: 'https://api.zeekit.co/v3/product/124871/data/124871_vibe.jpg'
+                    brandImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
+                    retailerImageUrl: 'https://storage.googleapis.com/zeekit-live-asset/icon/brand/adidas.jpg'
+      operationId: get-product-productId
+      description: Get single product
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  '/product/{productId}/tag':
+    parameters:
+      - schema:
+          type: number
+        name: productId
+        in: path
+        required: true
+    get:
+      summary: Product tag
+      tags:
+        - product
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+              examples:
+                ex-flow-1:
+                  value:
+                    - type: NECK_STYLE
+                      displayName: Collar
+                      id: 233532
+                      name: Collar
+                      display: true
+                      updatedAt: '2017-09-19T07:59:54Z'
+                      createdAt: '2017-09-19T07:59:54Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/neck_style/collar_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/neck_style/collar_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/neck_style/collar_woman.jpg'
+                      gender: UNISEX
+                    - type: SLEEVE_STYLE
+                      displayName: Short Sleeves
+                      id: 233550
+                      name: Short Sleeves
+                      display: true
+                      updatedAt: '2017-09-19T17:01:22Z'
+                      createdAt: '2017-09-19T17:01:22Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/shortsleeves_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/shortsleeves_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/shortsleeves_woman.jpg'
+                      gender: UNISEX
+                    - type: FIT
+                      displayName: Tight
+                      id: 233557
+                      name: Tight
+                      display: true
+                      updatedAt: '2017-09-25T11:51:44Z'
+                      createdAt: '2017-09-25T11:51:44Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fit/tight_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fit/tight_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fit/tight_woman.jpg'
+                      gender: UNISEX
+                    - type: COLOR
+                      displayName: Blue
+                      id: 251973
+                      name: Blue
+                      display: true
+                      updatedAt: '2019-05-01T14:28:22Z'
+                      createdAt: '2017-10-02T07:43:57Z'
+                      value: 0000FF
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/color/blue_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/color/blue_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/color/blue_woman.jpg'
+                      gender: UNISEX
+                    - type: FABRIC
+                      displayName: polyester
+                      id: 271515
+                      name: polyester
+                      display: true
+                      updatedAt: '2017-10-18T15:48:59Z'
+                      createdAt: '2017-10-18T15:48:59Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/polyester_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/polyester_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/polyester_woman.jpg'
+                      gender: UNISEX
+                    - type: FABRIC
+                      displayName: jersey
+                      id: 271544
+                      name: jersey
+                      display: true
+                      updatedAt: '2017-10-18T15:49:06Z'
+                      createdAt: '2017-10-18T15:49:06Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/jersey_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/jersey_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/jersey_woman.jpg'
+                      gender: UNISEX
+                    - type: FABRIC
+                      displayName: elastane
+                      id: 271563
+                      name: elastane
+                      display: true
+                      updatedAt: '2017-10-18T15:49:10Z'
+                      createdAt: '2017-10-18T15:49:10Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/elastane_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/elastane_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/elastane_woman.jpg'
+                      gender: UNISEX
+                    - type: FABRIC
+                      displayName: down
+                      id: 271565
+                      name: down
+                      display: true
+                      updatedAt: '2017-10-18T15:49:11Z'
+                      createdAt: '2017-10-18T15:49:11Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/down_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/down_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/fabric/down_woman.jpg'
+                      gender: UNISEX
+                    - type: BODY
+                      displayName: Regular
+                      id: 279339
+                      name: Regular
+                      display: true
+                      updatedAt: '2018-07-10T11:13:19Z'
+                      createdAt: '2018-07-10T11:13:19Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/body/regular_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/body/regular_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/body/regular_woman.jpg'
+                      gender: UNISEX
+                    - type: POSE
+                      displayName: Back
+                      id: 279826
+                      name: Back
+                      display: true
+                      updatedAt: '2018-12-02T09:23:17Z'
+                      createdAt: '2018-12-02T09:23:17Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/pose/back_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/pose/back_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/pose/back_woman.jpg'
+                      gender: UNISEX
+                    - type: SHOE_TYPE
+                      displayName: Sneakers
+                      id: 279827
+                      name: Sneakers
+                      display: true
+                      updatedAt: '2018-12-02T09:23:18Z'
+                      createdAt: '2018-12-02T09:23:18Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_type/sneakers_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_type/sneakers_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_type/sneakers_woman.jpg'
+                      gender: UNISEX
+                    - type: STATURE
+                      displayName: Regular
+                      id: 280120
+                      name: Regular
+                      display: true
+                      updatedAt: '2019-02-28T06:57:16Z'
+                      createdAt: '2019-02-28T06:57:16Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/stature/regular_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/stature/regular_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/stature/regular_woman.jpg'
+                      gender: UNISEX
+                    - type: AGE_GROUP
+                      displayName: Regular
+                      id: 280124
+                      name: Regular
+                      display: true
+                      updatedAt: '2019-02-28T08:27:09Z'
+                      createdAt: '2019-02-28T07:04:10Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/age_group/regular_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/age_group/regular_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/age_group/regular_woman.jpg'
+                      gender: UNISEX
+                    - type: OPENING_STYLE
+                      displayName: Closed
+                      id: 281923
+                      name: Closed
+                      display: true
+                      updatedAt: '2020-06-29T11:47:47Z'
+                      createdAt: '2020-06-29T11:47:47Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/opening_style/closed_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/opening_style/closed_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/opening_style/closed_woman.jpg'
+                      gender: UNISEX
+      operationId: get-product-productId-tag
+      description: Get product tag
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
   '/image/{imageId}':
     parameters:
       - schema:
@@ -328,6 +526,134 @@ paths:
                     status: ACTIVE
       operationId: get-image-imageId
       description: Get single image
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
+  '/image/{imageId}/tag':
+    parameters:
+      - schema:
+          type: number
+        name: imageId
+        in: path
+        required: true
+    get:
+      summary: Image Tags
+      tags:
+        - image
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+              examples:
+                ex-flow-1:
+                  value:
+                    - type: SLEEVE_STYLE
+                      displayName: Long Sleeves
+                      id: 233549
+                      name: Long Sleeves
+                      display: true
+                      updatedAt: '2017-09-19T17:01:22Z'
+                      createdAt: '2017-09-19T17:01:22Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/longsleeves_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/longsleeves_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/longsleeves_woman.jpg'
+                      gender: UNISEX
+                    - type: SLEEVE_STYLE
+                      displayName: Short Sleeves
+                      id: 233550
+                      name: Short Sleeves
+                      display: true
+                      updatedAt: '2017-09-19T17:01:22Z'
+                      createdAt: '2017-09-19T17:01:22Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/shortsleeves_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/shortsleeves_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/shortsleeves_woman.jpg'
+                      gender: UNISEX
+                    - type: SLEEVE_STYLE
+                      displayName: Sleeveless
+                      id: 233551
+                      name: Sleeveless
+                      display: true
+                      updatedAt: '2017-09-19T17:01:22Z'
+                      createdAt: '2017-09-19T17:01:22Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/sleeveless_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/sleeveless_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/sleeveless_woman.jpg'
+                      gender: UNISEX
+                    - type: SLEEVE_STYLE
+                      displayName: Cap Sleeves
+                      id: 271596
+                      name: Cap Sleeves
+                      display: true
+                      parentId: 233550
+                      updatedAt: '2020-05-04T05:09:22Z'
+                      createdAt: '2017-10-19T15:02:29Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/capsleeves_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/capsleeves_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/capsleeves_woman.jpg'
+                      gender: UNISEX
+                    - type: SLEEVE_STYLE
+                      displayName: Quarter Sleeves
+                      id: 271597
+                      name: Quarter Sleeves
+                      display: true
+                      parentId: 233549
+                      updatedAt: '2020-05-04T05:09:22Z'
+                      createdAt: '2017-10-19T15:05:46Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/quartersleeves_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/quartersleeves_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/sleeve_style/quartersleeves_woman.jpg'
+                      gender: UNISEX
+                    - type: FACIAL_EXPRESSION
+                      displayName: Neutral
+                      id: 279820
+                      name: Neutral
+                      display: true
+                      updatedAt: '2018-12-02T09:23:15Z'
+                      createdAt: '2018-12-02T09:23:15Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/facial_expression/neutral_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/facial_expression/neutral_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/facial_expression/neutral_woman.jpg'
+                      gender: UNISEX
+                    - type: MAKEUP
+                      displayName: Natural look
+                      id: 279821
+                      name: Natural look
+                      display: true
+                      updatedAt: '2018-12-02T09:23:16Z'
+                      createdAt: '2018-12-02T09:23:16Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/makeup/naturallook_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/makeup/naturallook_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/makeup/naturallook_woman.jpg'
+                      gender: UNISEX
+                    - type: SHOE_COLOR
+                      displayName: Black
+                      id: 280005
+                      name: Black
+                      display: true
+                      updatedAt: '2019-01-27T14:52:57Z'
+                      createdAt: '2019-01-27T14:52:57Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_color/black_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_color/black_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_color/black_woman.jpg'
+                      gender: UNISEX
+                    - type: SHOE_TYPE
+                      displayName: Boots
+                      id: 280040
+                      name: Boots
+                      display: true
+                      updatedAt: '2019-01-30T07:18:28Z'
+                      createdAt: '2019-01-30T07:18:28Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_type/boots_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_type/boots_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/shoe_type/boots_woman.jpg'
+                      gender: UNISEX
+      operationId: get-image-imageId-tag
+      description: Get image tags
       parameters:
         - $ref: '#/components/parameters/xzClientParam'
   /meta/image/models:
@@ -382,12 +708,12 @@ paths:
             minimum: 0
           in: query
           name: limit
-          description: "server default is '20'"
+          description: server default is '20'
         - schema:
             type: number
           in: query
           name: offset
-          description: "server default is '0'"
+          description: server default is '0'
         - schema:
             $ref: '#/components/schemas/Gender'
           in: query
@@ -457,7 +783,7 @@ paths:
             type: string
           in: query
           name: view
-          description: "server default is 'FRONT'"
+          description: server default is 'FRONT'
         - schema:
             type: string
           in: query
@@ -530,12 +856,12 @@ paths:
             minimum: 0
           in: query
           name: limit
-          description: "server default is '20'"
+          description: server default is '20'
         - schema:
             type: number
           in: query
           name: offset
-          description: "server default is '0'"
+          description: server default is '0'
         - schema:
             $ref: '#/components/schemas/Gender'
           in: query
@@ -617,7 +943,7 @@ paths:
             type: string
           in: query
           name: view
-          description: "server default is 'FRONT'"
+          description: server default is 'FRONT'
         - schema:
             type: string
           in: query
@@ -667,6 +993,123 @@ paths:
       parameters:
         - $ref: '#/components/parameters/xzClientParam'
       description: Get single persona
+  '/persona/{personaId}/tag':
+    parameters:
+      - schema:
+          type: number
+        name: personaId
+        in: path
+        required: true
+    get:
+      summary: Persona Tags
+      tags:
+        - persona
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+              examples:
+                ex-flow-1:
+                  value:
+                    - type: BODY
+                      displayName: Curvy
+                      id: 279313
+                      name: Curvy
+                      display: true
+                      updatedAt: '2018-12-03T10:48:53Z'
+                      createdAt: '2018-05-15T10:20:38Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/body/curvy_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/body/curvy_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/body/curvy_woman.jpg'
+                      gender: UNISEX
+                    - type: ETHNICITY
+                      displayName: Caucasian
+                      id: 279814
+                      name: Caucasian
+                      display: true
+                      updatedAt: '2018-12-02T09:18:57Z'
+                      createdAt: '2018-12-02T09:18:57Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/ethnicity/caucasian_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/ethnicity/caucasian_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/ethnicity/caucasian_woman.jpg'
+                      gender: UNISEX
+                    - type: EYE_COLOR
+                      displayName: Blue_Eyes
+                      id: 279833
+                      name: Blue_Eyes
+                      display: true
+                      updatedAt: '2018-12-02T09:23:19Z'
+                      createdAt: '2018-12-02T09:23:19Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/eye_color/blue_eyes_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/eye_color/blue_eyes_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/eye_color/blue_eyes_woman.jpg'
+                      gender: UNISEX
+                    - type: HAIR_COLOR
+                      displayName: Blonde
+                      id: 279834
+                      name: Blonde
+                      display: true
+                      updatedAt: '2019-08-25T08:02:54Z'
+                      createdAt: '2018-12-02T09:23:20Z'
+                      order: 3
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/hair_color/blonde_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/hair_color/blonde_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/hair_color/blonde_woman.jpg'
+                      gender: UNISEX
+                    - type: AGE_GROUP
+                      displayName: Mature
+                      id: 279842
+                      name: Mature
+                      display: true
+                      updatedAt: '2018-12-02T09:23:22Z'
+                      createdAt: '2018-12-02T09:23:22Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/age_group/mature_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/age_group/mature_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/age_group/mature_woman.jpg'
+                      gender: UNISEX
+                    - type: STATURE
+                      displayName: Regular
+                      id: 280120
+                      name: Regular
+                      display: true
+                      updatedAt: '2019-02-28T06:57:16Z'
+                      createdAt: '2019-02-28T06:57:16Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/stature/regular_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/stature/regular_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/stature/regular_woman.jpg'
+                      gender: UNISEX
+                    - type: SKIN_TONE
+                      displayName: Very Fair
+                      id: 281817
+                      name: Very Fair
+                      display: true
+                      updatedAt: '2019-08-25T08:01:53Z'
+                      createdAt: '2019-05-13T10:30:58Z'
+                      order: 1
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/skin_tone/veryfair_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/skin_tone/veryfair_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/skin_tone/veryfair_woman.jpg'
+                      gender: UNISEX
+                    - type: SPECIAL
+                      displayName: Galita Model
+                      id: 281916
+                      name: Galita Model
+                      display: true
+                      updatedAt: '2020-03-11T14:29:01Z'
+                      createdAt: '2020-02-18T08:20:10Z'
+                      womanImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/special/galitamodel_woman.jpg'
+                      manImageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/special/galitamodel_man.jpg'
+                      imageUrl: 'https://storage.googleapis.com/zeekit-qa-asset/icon/special/galitamodel_woman.jpg'
+                      gender: UNISEX
+      operationId: get-persona-personaId-tag
+      description: Get persona tags
+      parameters:
+        - $ref: '#/components/parameters/xzClientParam'
   '/image/{imageId}/{visualizationType}/{products}':
     parameters:
       - schema:
@@ -688,11 +1131,11 @@ paths:
         description: ''
       - schema:
           type: string
-          pattern: "^(\\d+)(,\\d+)*$"
+          pattern: '^(\d+)(,\d+)*$'
         name: products
         in: path
         required: true
-        description: "product ids separated with ','"
+        description: 'product ids separated with '','''
     get:
       summary: Image Visualization
       tags:
@@ -724,37 +1167,37 @@ paths:
             type: number
           in: query
           name: cropIndex
-          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+          description: 'When ''crop'' is used, cropIndex will be apply relative to the product index in the request path ''products'' list'
         - schema:
             type: boolean
           in: query
           name: headless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: shoeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: hipless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: breastless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: kneeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: torsoless
-          description: "server default is 'false'"
+          description: server default is 'false'
   '/persona/{personaId}/{visualizationType}/{products}':
     parameters:
       - schema:
@@ -776,11 +1219,11 @@ paths:
         description: ''
       - schema:
           type: string
-          pattern: "^(\\d+)(,\\d+)*$"
+          pattern: '^(\d+)(,\d+)*$'
         name: products
         in: path
         required: true
-        description: "product ids separated with ','"
+        description: 'product ids separated with '','''
     get:
       summary: Persona Visualization
       tags:
@@ -813,37 +1256,37 @@ paths:
             type: number
           in: query
           name: cropIndex
-          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+          description: 'When ''crop'' is used, cropIndex will be apply relative to the product index in the request path ''products'' list'
         - schema:
             type: boolean
           in: query
           name: headless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: shoeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: hipless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: breastless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: kneeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: torsoless
-          description: "server default is 'false'"
+          description: server default is 'false'
   '/persona/{personaId}/image':
     parameters:
       - schema:
@@ -893,11 +1336,11 @@ paths:
         description: ''
       - schema:
           type: string
-          pattern: "^(\\d+)(,\\d+)*$"
+          pattern: '^(\d+)(,\d+)*$'
         name: products
         in: path
         required: true
-        description: "product ids separated with ','"
+        description: 'product ids separated with '','''
       - schema:
           type: number
         name: backgroundId
@@ -933,37 +1376,37 @@ paths:
             type: number
           in: query
           name: cropIndex
-          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+          description: 'When ''crop'' is used, cropIndex will be apply relative to the product index in the request path ''products'' list'
         - schema:
             type: boolean
           in: query
           name: headless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: shoeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: hipless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: breastless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: kneeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: torsoless
-          description: "server default is 'false'"
+          description: server default is 'false'
   '/persona/{personaId}/{visualizationType}/{products}/background/{backgroundId}':
     parameters:
       - schema:
@@ -985,11 +1428,11 @@ paths:
         description: ''
       - schema:
           type: string
-          pattern: "^(\\d+)(,\\d+)*$"
+          pattern: '^(\d+)(,\d+)*$'
         name: products
         in: path
         required: true
-        description: "product ids separated with ','"
+        description: 'product ids separated with '','''
       - schema:
           type: number
         name: backgroundId
@@ -1025,37 +1468,37 @@ paths:
             type: number
           in: query
           name: cropIndex
-          description: "When 'crop' is used, cropIndex will be apply relative to the product index in the request path 'products' list"
+          description: 'When ''crop'' is used, cropIndex will be apply relative to the product index in the request path ''products'' list'
         - schema:
             type: boolean
           in: query
           name: headless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: shoeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: hipless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: breastless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: kneeless
-          description: "server default is 'false'"
+          description: server default is 'false'
         - schema:
             type: boolean
           in: query
           name: torsoless
-          description: "server default is 'false'"
+          description: server default is 'false'
       tags:
         - persona
   /user:
@@ -1272,7 +1715,7 @@ components:
         - 'TRUE'
         - 'FALSE'
         - ALL
-      description: "Boolean parameter with 'all' option (to allow both true and false), useful in overriding default filters where the default value is either true or false and you need 'all' option"
+      description: 'Boolean parameter with ''all'' option (to allow both true and false), useful in overriding default filters where the default value is either true or false and you need ''all'' option'
     Status:
       type: string
       title: Status
@@ -1303,7 +1746,7 @@ components:
         - Short Sleeves
         - Long Sleeves
         - Sweaters
-        - 'Jackets & Coats'
+        - Jackets & Coats
         - Dresses
         - Pants
         - Shorts
@@ -1402,6 +1845,72 @@ components:
           type: string
         displayName:
           type: string
+    Tag:
+      title: Tag
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - CLOTHING
+            - SHOPS
+            - COLOR
+            - FABRIC
+            - SPECIAL
+            - BRAND
+            - OCCASIONS
+            - SLEEVE_STYLE
+            - LEG_STYLE
+            - NECK_STYLE
+            - WAIST_STYLE
+            - FIT
+            - RETAILER
+            - GROUP
+            - SHAPE
+            - PATTERN
+            - BODY
+            - ETHNICITY
+            - HAIR_COLOR
+            - EYE_COLOR
+            - STYLE
+            - SHOE_TYPE
+            - POSE
+            - MAKEUP
+            - FACIAL_EXPRESSION
+            - AGE_GROUP
+            - SHOE_COLOR
+            - SIZE
+            - STATURE
+            - PRICE
+            - SKIN_TONE
+            - STAGE
+            - OPENING_STYLE
+        displayName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        gender:
+          $ref: '#/components/schemas/Gender'
+        imageUrl:
+          type: string
+          format: uri
+        manImageUrl:
+          type: string
+          format: uri
+        womanImageUrl:
+          type: string
+          format: uri
+      required:
+        - name
+        - type
   parameters:
     xzClientParam:
       schema:
@@ -1434,7 +1943,7 @@ components:
           - original
       in: query
       name: size
-      description: "server default is 'large'"
+      description: server default is 'large'
     visualizationKeepAspectRationTypeParam:
       schema:
         type: string
@@ -1446,7 +1955,7 @@ components:
           - fill
       in: query
       name: keepAspectRatioType
-      description: "server default is 'none'"
+      description: server default is 'none'
 tags:
   - name: product
   - name: image
